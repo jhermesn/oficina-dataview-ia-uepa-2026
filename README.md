@@ -4,33 +4,33 @@ Por conta da falta de estrutura dos dados brutos e para facilitar o andamento da
 
 ## Arquivos de entrada
 
-- `focos_mensal_br_202607.csv` - focos de calor (detecções de satélite) para todo o Brasil em julho de 2026.
-- `tabela.csv` - série horária da estação metereológica de Paragominas, PA em julho de 2026.
+- [`focos_mensal_br_202607.csv`](dados_originais/focos_mensal_br_202607.csv) - focos de calor (detecções de satélite) para todo o Brasil em julho de 2026.
+- [`tabela.csv`](dados_originais/tabela.csv) - série horária da estação metereológica de Paragominas, PA em julho de 2026.
 
 ## Scripts
 
-- `filter_focos.py` - gera `focos_paragominas_202607.csv`
-- `convert_tabela.py` - gera `tabela_paragominas_202607.csv`
+- [`filter_focos.py`](scripts/filter_focos.py) - gera [`focos_paragominas_202607.csv`](dados_tratados/focos_paragominas_202607.csv)
+- [`convert_tabela.py`](scripts/convert_tabela.py) - gera [`tabela_paragominas_202607.csv`](dados_tratados/tabela_paragominas_202607.csv)
 
 ## O que cada script faz
 
-### `filter_focos.py`
+### [`filter_focos.py`](scripts/filter_focos.py)
 
-1. Lê `focos_mensal_br_202607.csv` com `csv.DictReader`.
+1. Lê [`focos_mensal_br_202607.csv`](dados_originais/focos_mensal_br_202607.csv) com `csv.DictReader`.
 2. Mantém apenas linhas com `municipio == "PARAGOMINAS"`.
 3. Remove espaços em branco de todos os campos (`lat`/`lon` vinham com espaços à esquerda, ex: `"  -8.593300"`).
-4. Escreve `focos_paragominas_202607.csv` com as mesmas 16 colunas do original, agora limpo.
+4. Escreve [`focos_paragominas_202607.csv`](dados_tratados/focos_paragominas_202607.csv) com as mesmas 16 colunas do original, agora limpo.
 
 Resultado: 265 linhas, cobrindo `2026-07-01 00:00:00` até `2026-07-07 18:38:00`.
 
-### `convert_tabela.py`
+### [`convert_tabela.py`](scripts/convert_tabela.py)
 
-1. Lê `tabela.csv` com delimitador `;`.
+1. Lê [`tabela.csv`](dados_originais/tabela.csv) com delimitador `;`.
 2. Junta `Data` (`DD/MM/YYYY`) + `Hora (UTC)` (`HHMM`) em uma única coluna `datetime_utc` no formato `YYYY-MM-DD HH:MM:SS` — o mesmo formato de `data_hora_gmt` do arquivo de focos, para permitir join direto entre os dois arquivos.
 3. Converte todos os valores numéricos de decimal-vírgula (`25,5`) para decimal-ponto (`25.5`).
 4. Renomeia as colunas para `snake_case` sem acentos/parênteses (ex. `"Temp. Ins. (C)"` → `temp_inst_c`).
 5. Descarta linhas sem nenhuma medição (horas do dia corrente ainda não registradas pela estação).
-6. Filtra para o intervalo `2026-07-01` a `2026-07-07`, mesma cobertura de dias do `focos_paragominas_202607.csv`.
+6. Filtra para o intervalo `2026-07-01` a `2026-07-07`, mesma cobertura de dias do [`focos_paragominas_202607.csv`](dados_tratados/focos_paragominas_202607.csv).
 
 Resultado: 168 linhas (7 dias * 24 horas), de `2026-07-01 00:00:00` a `2026-07-07 23:00:00`.
 
@@ -40,8 +40,8 @@ O período (dia inicial e dia final) bate exatamente entre os dois arquivos: `20
 
 Os timestamps individuais **não** batem hora a hora, e isso é esperado:
 
-- `tabela_paragominas_202607.csv` é uma série regular e faz uma leitura por hora, todo dia.
-- `focos_paragominas_202607.csv` são detecções reais de satélite (eventos), não amostras programadas. A frequência cai conforme a atividade de queimada muda:
+- [`tabela_paragominas_202607.csv`](dados_tratados/tabela_paragominas_202607.csv) é uma série regular e faz uma leitura por hora, todo dia.
+- [`focos_paragominas_202607.csv`](dados_tratados/focos_paragominas_202607.csv) são detecções reais de satélite (eventos), não amostras programadas. A frequência cai conforme a atividade de queimada muda:
 
 | dia | nº de detecções |
 |---|---|
@@ -57,8 +57,8 @@ Por isso o último registro de foco em 07/07 é às 18:38, enquanto a estação 
 
 ## Arquivos de saída
 
-- `focos_paragominas_202607.csv`
-- `tabela_paragominas_202607.csv`
+- [`focos_paragominas_202607.csv`](dados_tratados/focos_paragominas_202607.csv)
+- [`tabela_paragominas_202607.csv`](dados_tratados/tabela_paragominas_202607.csv)
 
 ---
 
